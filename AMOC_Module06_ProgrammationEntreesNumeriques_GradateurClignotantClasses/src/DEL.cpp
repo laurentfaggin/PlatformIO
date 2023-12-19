@@ -36,16 +36,16 @@ void DEL::setIntensite(float p_intensite){
 
 void DEL::clignoter(float p_tempsAllume, float p_tempsEteint) {
 
-    unsigned long currentMicros = millis();
+    unsigned long currentMillis = millis();
  
-    while(m_dureeActionMS > 0 && (currentMicros - m_dateDerniereDecrementation) >= 1000){
+    while(m_dureeActionMS > 0 && (currentMillis - m_dateDerniereDecrementation) >= 1000){
         m_dureeActionMS --;
         m_dateDerniereDecrementation += 1000;
     }
 
-    if (currentMicros - m_dateDerniereDecrementation >= m_dureeActionMS) {
+    if (currentMillis - m_dateDerniereDecrementation >= m_dureeActionMS) {
     
-        m_dateDerniereDecrementation = currentMicros;
+        m_dateDerniereDecrementation = currentMillis;
 
         if (m_etatCycle == 1) {
             allumer(m_pourcentageIntensite);
