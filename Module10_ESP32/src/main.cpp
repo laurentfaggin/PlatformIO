@@ -2,27 +2,34 @@
 #include <WiFi.h>
 #include <LiquidCrystal_I2C.h>
 #include "Connection.h"
+#include "LCD1602ProxyI2C.h"
 
-#define WIFI_SSID "BELL092"
-#define WIFI_PASSWORD "77F597E97D7F"
+#define WIFI_SSID "iot_lab"
+#define WIFI_PASSWORD "engagelejeuquejelegagne"
 
 Connection* connection;
+LCD1602ProxyI2C* lcd;
 
 void setup() {
     Serial.begin(115200);
     connection = new Connection(WIFI_SSID, WIFI_PASSWORD);
+    lcd = new LCD1602ProxyI2C();
+    String url = "https://ifconfig.co/json";
     if (connection->wiFiConnected()) {
-        Serial.print("Connecté au réseau WiFi, adresse IP locale : ");
-        Serial.println(connection->getLocalIP());
-        Serial.println("");
-        String ipPublique = connection->getPublicIP();
+        String ipAddress = "WiFi Connecte IP: " + connection->getLocalIP();
+        lcd->definirPositionCurseur(0,0);
+        lcd->afficher(ipAddress);       
+       
+        String ipPublique = connection->getPublicIP(url);
         Serial.print("Adresse IP publique : ");
         Serial.println(ipPublique);
     } else {
         Serial.println("Connexion échouée");
     }
+    
 }
 
 
 void loop() {
+
 }

@@ -1,18 +1,17 @@
 #include "Connection.h"
 
-
 Connection::Connection(String p_ssid, String p_password):
     m_ssid(p_ssid),
     m_password(p_password)
 {
-    ;
+    wiFiConnected();
 }
 
 bool Connection::wiFiConnected(){
     Serial.println("Connexion au reseau: ");
     WiFi.begin(m_ssid, m_password);
     int essay = 0;
-    while (essay < 15 && WiFi.status() != WL_CONNECTED){
+    while (essay < 30 && WiFi.status() != WL_CONNECTED){
         Serial.print(".");
         delay(500);
         ++essay;
@@ -27,22 +26,23 @@ bool Connection::wiFiConnected(){
     }
 }
 
-String Connection::getPublicIP(){
+String Connection::getPublicIP(String url){
+    String res = "";
     if (WiFi.status() == WL_CONNECTED){
-        String url = "https://ifconfig.co.json";
-        String url2 = "http://api.ipify.org/?format=json";
+        
         HTTPClient httpClient;
-        httpClient.begin(url2);
+        httpClient.begin(url);
         int codeStatut = httpClient.GET();
         //la methode GET est bloquante, elle attend le retour avant de continuer le code
         if (codeStatut != 200) {
-            return HTTPClient::errorToString(codeStatut);
+            res = HTTPClient::errorToString(codeStatut);
         } else {
-            return httpClient.getString();
+            res = httpClient.getString();
         }
     } else {
-        return "Non connecté au WiFi !";
-    }      
+        res = "Non connecté au WiFi !";
+    }    
+    return res;  
 }
 
 String Connection::getLocalIP() {

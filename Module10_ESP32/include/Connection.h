@@ -5,7 +5,7 @@
 class Connection{
     public:
         Connection(String p_ssid, String p_password);
-        String getPublicIP();
+        String getPublicIP(String url);
         String getLocalIP();
         bool wiFiConnected();
     private:
