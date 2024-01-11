@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- PFL : Code pour les fallbacks de Bootstrap trouvé ici : https://www.jeremyknight.me/posts/2021/2021-01-08-bootstrap-5-cdn-fallback/ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css"
+        onerror="this.onerror=null;this.href='css/bootstrap.min.css';this.removeAttribute('integrity');this.removeAttribute('crossorigin');"
+        integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <title>Actionneurs !</title>
+</head>
+
+<body>
+    <main>
+        <div class="container col-xl-10">
+            <div class="row align-items-center g-lg-5 py-5">
+                <div class="col-md-10 mx-auto col-lg-5">
+                    <div class="p-4 p-md-5 border rounded-3 bg-light">
+                        <div class="mb-3">
+                            Actionneurs
+                        </div>
+                        <div class="mb-3" id="messages">
+
+                        </div>
+                        <div id="actionneurs"></div>
+                        <hr class="my-4">
+                        <small class="text-muted">Site diffusé par votre ESP32.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"
+        integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        if (!window.bootstrap) { // the bootstrap object is not present
+            var newScript = document.createElement("script");
+            newScript.setAttribute("src", "js/bootstrap.min.js");
+            document.getElementsByTagName("head")[0].appendChild(newScript);
+        }
+    </script>
+
+    <script>
+        // function listerActionneurs() {
+        //     var xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = () => {
+        //         if (xhttp.readyState == 4) {
+        //             if (xhttp.status == 200) {
+        //                 var json = xhttp.response;
+        //                 var actionneurs = JSON.parse(json);
+        //                 var divActionneurs = document.getElementById("actionneurs")
+
+        //                 actionneurs.forEach(actionneur => {
+        //                     var div = document.createElement("div");
+        //                     div.classList.add("mb-3");
+        //                     div.classList.add("form-check");
+        //                     div.classList.add("form-switch");
+
+        //                     var input = document.createElement("input");
+        //                     var inputId = "actionneur_" + actionneur.id;
+        //                     input.id = inputId;
+        //                     input.dataset.id = actionneur.id;
+        //                     input.type = "checkbox";
+        //                     input.checked = actionneur.statut == "allume";
+        //                     input.classList.add("form-check-input");
+        //                     input.onchange = function () {
+        //                         modifierEtat(this.checked, this.dataset.id);
+        //                     };
+
+        //                     var label = document.createElement("label");
+        //                     label.classList.add("form-check-label");
+        //                     label.for = inputId;
+        //                     label.innerText = actionneur.description;
+
+        //                     div.appendChild(input);
+        //                     div.appendChild(label);
+
+        //                     divActionneurs.appendChild(div);
+        //                 });
+        //             } else {
+        //                 console.log("Erreur: " + xhttp.responseText);
+        //             }
+        //         }
+        //     }
+        //     xhttp.open("GET", "actionneurs", true);
+        //     xhttp.send();
+        // }
+
+        // function modifierEtat(allume, p_id) {
+        //     var xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = () => {
+        //         if (xhttp.readyState == 4) {
+        //             if (xhttp.status == 200) {
+        //                 var json = xhttp.response;
+        //                 var actionneur = JSON.parse(json);
+
+        //                 document.getElementById("actionneur_" + actionneur.id).checked = actionneur.statut == "allume";
+        //             } else {
+        //                 console.log("Erreur: " + xhttp.responseText);
+        //             }
+        //         }
+        //     }
+        //     xhttp.open("PUT", "actionneurs/" + p_id, true);
+        //     xhttp.setRequestHeader('Content-type', 'text/json');
+        //     xhttp.send(JSON.stringify({
+        //         id: p_id,
+        //         statut: allume ? "allume" : "eteint"
+        //     }));
+        // }
+        // window.onload = listerActionneurs;
+
+        window.addEventListener("load", async (event) => {
+            try {
+                // Appel de l'API
+                const reponse = await fetch('actionneurs');
+                const actionneurs = await reponse.json();
+                var divActionneurs = document.getElementById("actionneurs");
+
+                // Affichage des actionneurs de manière dynamique
+                actionneurs.forEach(actionneur => {
+                    var div = document.createElement("div");
+                    div.classList.add("mb-3");
+                    div.classList.add("form-check");
+                    div.classList.add("form-switch");
+
+                    var input = document.createElement("input");
+                    var inputId = "actionneur_" + actionneur.id;
+                    input.id = inputId;
+                    input.dataset.id = actionneur.id;
+                    input.type = "checkbox";
+                    input.checked = actionneur.statut == "allume";
+                    input.classList.add("form-check-input");
+                    input.addEventListener('change', async (event) => {
+                        try {
+                            // Appel de l'API
+                            const reponse = await fetch('actionneurs/' + event.target.dataset.id, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    id: event.target.dataset.id,
+                                    statut: event.target.checked ? "allume" : "eteint"
+                                })
+                            });
+                            const statut = await reponse.json();
+                            event.target.checked = statut.statut == "allume";
+
+                            afficherMessage(`Modification actionneur ${event.target.dataset.id} Ok`);
+                        } catch (error) {
+                            afficherMessage("Erreur: " + error.message);
+                        }
+                    });
+
+                    var label = document.createElement("label");
+                    label.classList.add("form-check-label");
+                    label.for = inputId;
+                    label.innerText = actionneur.description;
+
+                    div.appendChild(input);
+                    div.appendChild(label);
+
+                    divActionneurs.appendChild(div);
+                });
+            } catch (error) {
+                afficherMessage("Erreur: " + error.message);
+            }
+        });
+
+        function afficherMessage(p_message) {
+            document.getElementById("messages").innerHTML = p_message;
+        }
+    </script>
+</body>
+
+</html>

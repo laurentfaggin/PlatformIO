@@ -4,8 +4,10 @@
 #include "Connection.h"
 #include "LCD1602ProxyI2C.h"
 
-#define WIFI_SSID "iot_lab"
-#define WIFI_PASSWORD "engagelejeuquejelegagne"
+// #define WIFI_SSID "iot_lab"
+// #define WIFI_PASSWORD "engagelejeuquejelegagne"
+#define WIFI_SSID "BELL092"
+#define WIFI_PASSWORD "77F597E97D7F"
 
 Connection* connection;
 LCD1602ProxyI2C* lcd;

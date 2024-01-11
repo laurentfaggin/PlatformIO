@@ -19,7 +19,7 @@ void Program::connexionReseau() {
   const uint8_t nbEssaisMaximum = 30;
   uint8_t nbEssais = 0;
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(WIFI_SSID_HOME, WIFI_PASSWORD_HOME);
 
   Serial.print("Connexion : ");
   while (nbEssais < nbEssaisMaximum && WiFi.status() != WL_CONNECTED) {

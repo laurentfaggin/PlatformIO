@@ -5,8 +5,8 @@
 #define DEMO_WebServer 1
 #define DEMO_Filesystem 2
 
-//#define DEMO DEMO_WebServer
-#define DEMO DEMO_Filesystem
+#define DEMO DEMO_WebServer
+//#define DEMO DEMO_Filesystem
 
 #if DEMO == DEMO_WebServer
 
